@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💌 For Madeline</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a0011, #2d0a1e, #1a0011);
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+  }
+
+  /* ── floating hearts background ── */
+  .hearts-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  }
+  .floating-heart {
+    position: absolute;
+    bottom: -60px;
+    font-size: 20px;
+    opacity: 0.15;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0.15; }
+    50%  { opacity: 0.3; }
+    100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ── screens ── */
+  .screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    padding: 2rem;
+    width: 100%;
+    max-width: 600px;
+  }
+  .screen.active { display: flex; }
+
+  /* ── SCREEN 1 – question ── */
+  #screen-question h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 30px rgba(255,100,150,0.5);
+  }
+  #screen-question .subtitle {
+    font-size: 1rem;
+    opacity: 0.7;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+  .btn-row {
+    display: flex;
+    gap: 2rem;
+    position: relative;
+    min-height: 80px;
+    align-items: center;
+  }
+  .btn {
+    padding: 14px 48px;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .btn-yes {
+    background: linear-gradient(135deg, #ff4b7a, #ff1f5a);
+    color: #fff;
+    box-shadow: 0 4px 25px rgba(255,75,122,0.5);
+  }
+  .btn-yes:hover { transform: scale(1.1); box-shadow: 0 6px 35px rgba(255,75,122,0.7); }
+
+  .btn-no {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 2px solid rgba(255,255,255,0.2);
+    position: relative;
+    transition: none;
+    user-select: none;
+  }
+
+  /* ── SCREEN 2 – loading ── */
+  #screen-loading .loader-ring {
+    width: 80px; height: 80px;
+    border: 4px solid rgba(255,75,122,0.15);
+    border-top: 4px solid #ff4b7a;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 2rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #screen-loading .loading-text {
+    font-size: 1.3rem;
+    min-height: 2em;
+    transition: opacity 0.3s;
+  }
+  #screen-loading .loading-text.special {
+    font-family: 'Dancing Script', cursive;
+    color: #ff8bab;
+    font-size: 1.6rem;
+    text-shadow: 0 0 20px rgba(255,100,150,0.4);
+  }
+  .progress-bar-container {
+    width: 280px; height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    margin-top: 1.5rem;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff4b7a, #ff8bab);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── SCREEN 3 – gifts ── */
+  #screen-gifts h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    margin-bottom: 0.5rem;
+  }
+  #screen-gifts .gift-sub {
+    opacity: 0.6;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+  .gift-row {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .gift-box {
+    width: 180px; height: 200px;
+    perspective: 600px;
+    cursor: pointer;
+  }
+  .gift-inner {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, rgba(255,75,122,0.12), rgba(255,75,122,0.04));
+    border: 2px solid rgba(255,75,122,0.2);
+    border-radius: 20px;
+    transition: transform 0.4s, box-shadow 0.4s, border-color 0.4s;
+    padding: 1.5rem;
+  }
+  .gift-inner:hover {
+    transform: translateY(-8px) rotateY(5deg);
+    box-shadow: 0 15px 40px rgba(255,75,122,0.25);
+    border-color: rgba(255,75,122,0.5);
+  }
+  .gift-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    animation: giftBounce 2s ease-in-out infinite;
+  }
+  @keyframes giftBounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+  .gift-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  /* ── SCREEN 4 – rose ── */
+  #screen-rose {
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+  }
+  #screen-rose h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin-bottom: 0.3rem;
+    text-shadow: 0 0 30px rgba(255,100,150,0.5);
+    z-index: 5;
+  }
+  #screen-rose .rose-sub {
+    font-size: 1.1rem;
+    opacity: 0.7;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    z-index: 5;
+  }
+  #roseCanvas {
+    z-index: 5;
+    border-radius: 16px;
+  }
+  .sparkle-container {
+    position: fixed; inset: 0; pointer-events: none; z-index: 4;
+  }
+  .sparkle {
+    position: absolute;
+    width: 4px; height: 4px;
+    background: #ff8bab;
+    border-radius: 50%;
+    animation: sparkleAnim 1.5s ease-out forwards;
+  }
+  @keyframes sparkleAnim {
+    0%   { transform: scale(0) rotate(0deg); opacity: 1; }
+    100% { transform: scale(1) rotate(180deg) translateY(-60px); opacity: 0; }
+  }
+
+  /* ── SCREEN 5 – gift 2 (ticket joke) ── */
+  #screen-ticket .ticket-msg {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    max-width: 480px;
+    background: rgba(255,75,122,0.08);
+    border: 1px solid rgba(255,75,122,0.15);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    animation: fadeSlideUp 0.8s ease;
+  }
+  #screen-ticket .jk-msg {
+    display: none;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    color: #ff8bab;
+    animation: fadeSlideUp 0.6s ease;
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── general fade ── */
+  .fade-in  { animation: fadeIn 0.6s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+</head>
+<body>
+
+<!-- floating hearts -->
+<div class="hearts-bg" id="heartsBg"></div>
+
+<!-- SCREEN 1 ── will you be my valentine ── -->
+<div class="screen active" id="screen-question">
+  <h1>Will you be my Valentine, Madeline?</h1>
+  <p class="subtitle">Choose wisely... 💕</p>
+  <div class="btn-row">
+    <button class="btn btn-yes" onclick="sayYes()">Yes 💖</button>
+    <button class="btn btn-no" id="btnNo">No</button>
+  </div>
+</div>
+
+<!-- SCREEN 2 ── loading ── -->
+<div class="screen" id="screen-loading">
+  <div class="loader-ring"></div>
+  <div class="loading-text" id="loadingText">Loading...</div>
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+</div>
+
+<!-- SCREEN 3 ── choose a gift ── -->
+<div class="screen" id="screen-gifts">
+  <h2>Pick a Gift, Madeline 🎁</h2>
+  <p class="gift-sub">One of these is for you...</p>
+  <div class="gift-row">
+    <div class="gift-box" onclick="openGift(1)">
+      <div class="gift-inner">
+        <div class="gift-icon">🎁</div>
+        <div class="gift-label">Gift&nbsp;One</div>
+      </div>
+    </div>
+    <div class="gift-box" onclick="openGift(2)">
+      <div class="gift-inner">
+        <div class="gift-icon">🎀</div>
+        <div class="gift-label">Gift&nbsp;Two</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 ── 3D rose ── -->
+<div class="screen" id="screen-rose">
+  <h1>Happy Valentine's Day, Madeline 🌹</h1>
+  <p class="rose-sub">This one's for you</p>
+  <canvas id="roseCanvas" width="420" height="520"></canvas>
+  <div class="sparkle-container" id="sparkles"></div>
+</div>
+
+<!-- SCREEN 5 ── ticket joke ── -->
+<div class="screen" id="screen-ticket">
+  <div class="ticket-msg" id="ticketMsg">
+    ✈️&ensp;I've booked a ticket to come see you next week because I have no assignments that week, so I'm going to skip classes just to be with you.
+  </div>
+  <div class="jk-msg" id="jkMsg">Just kidding 😭<br>Go choose the other gift!</div>
+</div>
+
+<script>
+/* ═════════════════════════════════════
+   FLOATING HEARTS
+   ═════════════════════════════════════ */
+(function spawnHearts() {
+  const bg = document.getElementById('heartsBg');
+  const hearts = ['❤','💕','💗','♥','💖'];
+  for (let i = 0; i < 25; i++) {
+    const h = document.createElement('span');
+    h.className = 'floating-heart';
+    h.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+    h.style.left = Math.random()*100 + '%';
+    h.style.fontSize = (14 + Math.random()*18) + 'px';
+    h.style.animationDuration = (8 + Math.random()*12) + 's';
+    h.style.animationDelay = (Math.random()*10) + 's';
+    bg.appendChild(h);
+  }
+})();
+
+/* ═════════════════════════════════════
+   SCREEN HELPERS
+   ═════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ═════════════════════════════════════
+   SCREEN 1 – NO BUTTON DODGE
+   ═════════════════════════════════════ */
+const btnNo = document.getElementById('btnNo');
+let dodgeCount = 0;
+const dodgeMessages = [
+  "No", "Nope 🙃", "Try again", "Not happening", "Think again",
+  "You sure?", "Really?", "Can't click me", "Hehe", "Nah 😏",
+  "Too slow", "Nice try", "lol no"
+];
+
+function repositionNo() {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const bw = btnNo.offsetWidth, bh = btnNo.offsetHeight;
+  const x = Math.random() * (vw - bw - 40) + 20;
+  const y = Math.random() * (vh - bh - 40) + 20;
+  btnNo.style.position = 'fixed';
+  btnNo.style.left = x + 'px';
+  btnNo.style.top = y + 'px';
+  btnNo.style.zIndex = 1000;
+  dodgeCount++;
+  btnNo.textContent = dodgeMessages[dodgeCount % dodgeMessages.length];
+}
+
+btnNo.addEventListener('mouseenter', repositionNo);
+btnNo.addEventListener('touchstart', e => { e.preventDefault(); repositionNo(); });
+btnNo.addEventListener('click', e => { e.preventDefault(); repositionNo(); });
+
+/* ═════════════════════════════════════
+   SCREEN 2 – LOADING
+   ═════════════════════════════════════ */
+function sayYes() {
+  btnNo.style.position = '';
+  showScreen('screen-loading');
+  startLoading();
+}
+
+function startLoading() {
+  const messages = [
+    { text: "Loading...", special: false },
+    { text: "Buffering...", special: false },
+    { text: "Preparing something special...", special: false },
+    { text: "Still loading...", special: false },
+    { text: "Hang on...", special: false },
+    { text: "Almost there...", special: false },
+    { text: "I love you, Madeline ❤️", special: true },
+    { text: "Processing...", special: false },
+    { text: "Downloading love.exe...", special: false },
+    { text: "Connecting to heart server...", special: false },
+    { text: "Buffering feelings...", special: false },
+    { text: "Compiling emotions...", special: false },
+    { text: "You're beautiful, you know that? ✨", special: true },
+    { text: "Loading assets...", special: false },
+    { text: "Rendering...", special: false },
+    { text: "Please wait...", special: false },
+    { text: "This is taking a while...", special: false },
+    { text: "Syncing heartbeats...", special: false },
+    { text: "Optimizing cuddles...", special: false },
+    { text: "Batty fat gyal 😍", special: true },
+    { text: "Still buffering...", special: false },
+    { text: "Loading your surprise...", special: false },
+    { text: "Encrypting love letter...", special: false },
+    { text: "Calibrating butterflies...", special: false },
+    { text: "Establishing connection...", special: false },
+    { text: "Verifying feelings... ✔️", special: false },
+    { text: "You make me so happy, Madeline 💕", special: true },
+    { text: "Decompressing romance.zip...", special: false },
+    { text: "Initializing valentine protocol...", special: false },
+    { text: "Finalizing...", special: false },
+    { text: "Just a little more...", special: false },
+    { text: "Ready! 💖", special: false },
+  ];
+
+  const textEl = document.getElementById('loadingText');
+  const barEl  = document.getElementById('progressBar');
+  let i = 0;
+
+  const interval = setInterval(() => {
+    if (i >= messages.length) {
+      clearInterval(interval);
+      setTimeout(() => showScreen('screen-gifts'), 600);
+      return;
+    }
+    const msg = messages[i];
+    textEl.style.opacity = 0;
+    setTimeout(() => {
+      textEl.textContent = msg.text;
+      textEl.className = 'loading-text' + (msg.special ? ' special' : '');
+      textEl.style.opacity = 1;
+    }, 200);
+    barEl.style.width = ((i + 1) / messages.length * 100) + '%';
+    i++;
+  }, 1400);
+}
+
+/* ═════════════════════════════════════
+   SCREEN 3 – GIFTS
+   ═════════════════════════════════════ */
+function openGift(n) {
+  if (n === 1) {
+    showScreen('screen-rose');
+    drawRose();
+    startSparkles();
+  } else {
+    showScreen('screen-ticket');
+    setTimeout(() => {
+      document.getElementById('jkMsg').style.display = 'block';
+      setTimeout(() => showScreen('screen-gifts'), 4000);
+    }, 4000);
+  }
+}
+
+/* ═════════════════════════════════════
+   SCREEN 4 – 3D ROSE ON CANVAS
+   ═════════════════════════════════════ */
+function drawRose() {
+  const canvas = document.getElementById('roseCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2 - 30;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // ── stem ──
+  ctx.save();
+  ctx.strokeStyle = '#2d7a3a';
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + 60);
+  ctx.bezierCurveTo(cx - 8, cy + 140, cx + 12, cy + 220, cx - 2, cy + 310);
+  ctx.stroke();
+
+  // thorns
+  const thornPoints = [
+    { x: cx - 4, y: cy + 140, angle: -0.8 },
+    { x: cx + 6, y: cy + 200, angle: 0.7 },
+    { x: cx - 2, y: cy + 260, angle: -0.6 },
+  ];
+  ctx.lineWidth = 2.5;
+  thornPoints.forEach(t => {
+    ctx.beginPath();
+    ctx.moveTo(t.x, t.y);
+    ctx.lineTo(t.x + Math.cos(t.angle) * 14, t.y + Math.sin(t.angle) * 10);
+    ctx.stroke();
+  });
+
+  // ── leaves ──
+  function drawLeaf(ox, oy, scaleX, scaleY, rot) {
+    ctx.save();
+    ctx.translate(ox, oy);
+    ctx.rotate(rot);
+    ctx.scale(scaleX, scaleY);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(16, -18, 40, -14, 44, 0);
+    ctx.bezierCurveTo(40, 14, 16, 18, 0, 0);
+    ctx.fillStyle = '#3a9e4a';
+    ctx.fill();
+    // leaf vein
+    ctx.beginPath();
+    ctx.moveTo(2, 0);
+    ctx.lineTo(38, 0);
+    ctx.strokeStyle = '#2d7a3a';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  }
+  drawLeaf(cx - 6, cy + 170, 1.2, 1, -0.5);
+  drawLeaf(cx + 4, cy + 230, -1.1, 1, 0.4);
+  ctx.restore();
+
+  // ── rose petals (layered, 3D-ish) ──
+  const petalLayers = [
+    // outermost layer – large petals
+    { count: 7, radius: 68, petalW: 52, petalH: 72, colors: ['#c0274e','#a11d40'], startAngle: 0 },
+    { count: 6, radius: 50, petalW: 44, petalH: 62, colors: ['#d4305a','#b8264c'], startAngle: 0.45 },
+    { count: 5, radius: 35, petalW: 36, petalH: 50, colors: ['#e8436e','#d4305a'], startAngle: 0.3 },
+    { count: 5, radius: 22, petalW: 28, petalH: 40, colors: ['#f25c82','#e8436e'], startAngle: 0.7 },
+    { count: 4, radius: 12, petalW: 20, petalH: 30, colors: ['#ff7a9e','#f25c82'], startAngle: 0.2 },
+  ];
+
+  function drawPetal(x, y, w, h, angle, color1, color2) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    const grad = ctx.createRadialGradient(0, -h*0.3, 2, 0, -h*0.2, h*0.8);
+    grad.addColorStop(0, color1);
+    grad.addColorStop(1, color2);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(-w*0.6, -h*0.3, -w*0.5, -h*0.85, 0, -h);
+    ctx.bezierCurveTo(w*0.5, -h*0.85, w*0.6, -h*0.3, 0, 0);
+    ctx.fill();
+
+    // subtle edge highlight
+    ctx.strokeStyle = 'rgba(255,200,220,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(-w*0.6, -h*0.3, -w*0.5, -h*0.85, 0, -h);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  petalLayers.forEach(layer => {
+    for (let i = 0; i < layer.count; i++) {
+      const angle = layer.startAngle + (Math.PI * 2 / layer.count) * i;
+      const px = cx + Math.cos(angle) * layer.radius * 0.3;
+      const py = cy + Math.sin(angle) * layer.radius * 0.3;
+      drawPetal(px, py, layer.petalW, layer.petalH, angle - Math.PI/2, layer.colors[0], layer.colors[1]);
+    }
+  });
+
+  // ── rose center spiral ──
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.beginPath();
+  const spiralTurns = 3;
+  for (let t = 0; t < spiralTurns * Math.PI * 2; t += 0.05) {
+    const r = 2 + t * 1.4;
+    const x = Math.cos(t) * r;
+    const y = Math.sin(t) * r * 0.6;
+    if (t === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = '#8b1a3a';
+  ctx.lineWidth = 1.8;
+  ctx.stroke();
+  ctx.restore();
+
+  // ── center bud ──
+  const budGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 16);
+  budGrad.addColorStop(0, '#ff8bab');
+  budGrad.addColorStop(0.5, '#d4305a');
+  budGrad.addColorStop(1, '#a11d40');
+  ctx.beginPath();
+  ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+  ctx.fillStyle = budGrad;
+  ctx.fill();
+
+  // ── dew drops ──
+  function drawDew(x, y, r) {
+    ctx.save();
+    const dg = ctx.createRadialGradient(x - r*0.3, y - r*0.3, r*0.1, x, y, r);
+    dg.addColorStop(0, 'rgba(255,255,255,0.7)');
+    dg.addColorStop(0.5, 'rgba(200,230,255,0.3)');
+    dg.addColorStop(1, 'rgba(200,230,255,0.05)');
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = dg;
+    ctx.fill();
+    ctx.restore();
+  }
+  drawDew(cx + 38, cy - 40, 4);
+  drawDew(cx - 25, cy + 15, 3);
+  drawDew(cx + 15, cy - 55, 2.5);
+
+  // ── glow behind rose ──
+  ctx.save();
+  ctx.globalCompositeOperation = 'destination-over';
+  const glow = ctx.createRadialGradient(cx, cy, 10, cx, cy, 120);
+  glow.addColorStop(0, 'rgba(255,75,122,0.18)');
+  glow.addColorStop(1, 'rgba(255,75,122,0)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, 120, 0, Math.PI * 2);
+  ctx.fillStyle = glow;
+  ctx.fill();
+  ctx.restore();
+}
+
+/* ── sparkle particles ── */
+function startSparkles() {
+  const container = document.getElementById('sparkles');
+  setInterval(() => {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.left = (20 + Math.random() * 60) + '%';
+    s.style.top  = (20 + Math.random() * 60) + '%';
+    s.style.width = s.style.height = (2 + Math.random() * 4) + 'px';
+    s.style.background = ['#ff8bab','#ffb3c9','#fff','#ff4b7a'][Math.floor(Math.random()*4)];
+    container.appendChild(s);
+    setTimeout(() => s.remove(), 1500);
+  }, 200);
+}
+</script>
+</body>
+</html>
